@@ -1,0 +1,35 @@
+version: '3.4'
+
+x-template: &flyway-template
+  image: flyway/flyway:6.0.1
+  volumes:
+    - ./sql:/flyway/sql
+    - ./conf:/flyway/conf
+
+services:
+  flyway-clean:
+    <<: *flyway-template
+    command: clean
+
+  flyway-migrate:
+    <<: *flyway-template
+    command: migrate
+
+  flyway-info:
+    <<: *flyway-template
+    command: info
+
+  flyway-repair:
+    <<: *flyway-template
+    command: repair
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./mysql/:/var/lib/mysql/
+    environment:
+      MYSQL_DATABASE: sample
+      MYSQL_ROOT_PASSWORD: root
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - 3306:3306
